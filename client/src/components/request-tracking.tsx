@@ -106,12 +106,12 @@ export default function RequestTracking() {
       <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-medium text-foreground">Recent Requests</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">Track ongoing support cases</p>
+            <CardTitle className="text-lg font-medium text-foreground">Solicitudes Recientes</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">Seguimiento de casos de soporte en curso</p>
           </div>
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" />
-            Filter
+            Filtrar
           </Button>
         </div>
       </CardHeader>
@@ -149,10 +149,10 @@ export default function RequestTracking() {
               <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-foreground">
-                    {request.assignedTechnician || 'Unassigned'}
+                    {request.assignedTechnician || 'Sin Asignar'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {request.assignedTechnician ? 'Technician' : 'Pending Assignment'}
+                    {request.assignedTechnician ? 'Técnico' : 'Pendiente de Asignación'}
                   </p>
                 </div>
                 <Avatar className="w-8 h-8">
@@ -167,7 +167,7 @@ export default function RequestTracking() {
         
         <div className="mt-6 text-center">
           <Button variant="ghost" className="text-medical-blue hover:text-blue-700">
-            View All Requests
+            Ver Todas las Solicitudes
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>

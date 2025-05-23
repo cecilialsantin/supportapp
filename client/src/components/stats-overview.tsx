@@ -37,36 +37,36 @@ export default function StatsOverview() {
 
   const statCards = [
     {
-      title: "Active Requests",
+      title: "Solicitudes Activas",
       value: stats?.activeRequests || 0,
       icon: ClipboardList,
       color: "text-medical-blue",
       bgColor: "bg-blue-50 dark:bg-blue-950",
-      trend: { value: "8.1%", direction: "up", label: "from last week" }
+      trend: { value: "8.1%", direction: "up", label: "desde la semana pasada" }
     },
     {
-      title: "Urgent",
+      title: "Urgentes",
       value: stats?.urgentRequests || 0,
       icon: AlertCircle,
       color: "text-critical-red",
       bgColor: "bg-red-50 dark:bg-red-950",
-      trend: { value: "12.3%", direction: "down", label: "from yesterday" }
+      trend: { value: "12.3%", direction: "down", label: "desde ayer" }
     },
     {
-      title: "Available Techs",
+      title: "Técnicos Disponibles",
       value: stats?.availableTechs || 0,
       icon: UserCheck,
       color: "text-success-green",
       bgColor: "bg-green-50 dark:bg-green-950",
-      trend: { value: `Out of ${stats?.totalTechs || 0} total`, direction: null, label: "" }
+      trend: { value: `De ${stats?.totalTechs || 0} total`, direction: null, label: "" }
     },
     {
-      title: "Avg Response",
+      title: "Respuesta Promedio",
       value: stats?.avgResponseTime || "0min",
       icon: Clock,
       color: "text-warning-orange",
       bgColor: "bg-orange-50 dark:bg-orange-950",
-      trend: { value: "2.1min", direction: "down", label: "faster" }
+      trend: { value: "2.1min", direction: "down", label: "más rápido" }
     }
   ];
 

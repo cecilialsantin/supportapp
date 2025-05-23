@@ -62,8 +62,8 @@ export default function KnowledgeBase() {
   return (
     <Card className="border-border">
       <CardHeader className="border-b border-border">
-        <CardTitle className="text-lg font-medium text-foreground">Knowledge Base Quick Access</CardTitle>
-        <p className="text-sm text-muted-foreground mt-1">Common GEM 5000 troubleshooting guides</p>
+        <CardTitle className="text-lg font-medium text-foreground">Acceso Rápido a Base de Conocimientos</CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">Guías comunes de solución de problemas GEM 5000</p>
       </CardHeader>
       
       <CardContent className="p-6">
@@ -91,9 +91,9 @@ export default function KnowledgeBase() {
                       </p>
                       <div className="flex items-center mt-3 text-xs text-muted-foreground">
                         <Clock className="w-3 h-3 mr-1" />
-                        <span>{article.readTime} min read</span>
+                        <span>{article.readTime} min de lectura</span>
                         <span className="mx-2">•</span>
-                        <span>Updated {formatDistanceToNow(new Date(article.updatedAt), { addSuffix: true })}</span>
+                        <span>Actualizado hace {Math.floor((Date.now() - new Date(article.updatedAt).getTime()) / (1000 * 60 * 60 * 24))} días</span>
                       </div>
                     </div>
                   </div>
@@ -105,7 +105,7 @@ export default function KnowledgeBase() {
         
         <div className="mt-6 text-center">
           <Button className="bg-medical-blue hover:bg-blue-700 text-white">
-            Browse All Articles
+            Ver Todos los Artículos
           </Button>
         </div>
       </CardContent>
