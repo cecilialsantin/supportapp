@@ -207,11 +207,15 @@ export class MemStorage implements IStorage {
     const id = this.currentRequestId++;
     const now = new Date();
     const newRequest: SupportRequest = {
-      ...request,
       id,
+      serialNumber: request.serialNumber,
+      priority: request.priority,
+      description: request.description,
+      location: request.location,
+      contactNumber: request.contactNumber || null,
       status: "open",
       assignedTechnician: null,
-      contactNumber: request.contactNumber || null,
+      submittedBy: request.submittedBy,
       createdAt: now,
       updatedAt: now
     };
@@ -244,9 +248,12 @@ export class MemStorage implements IStorage {
   async createTechnician(technician: InsertTechnician): Promise<Technician> {
     const id = this.currentTechnicianId++;
     const newTechnician: Technician = {
-      ...technician,
       id,
+      name: technician.name,
+      email: technician.email,
       phone: technician.phone || null,
+      specialty: technician.specialty,
+      status: technician.status,
       activeRequests: 0
     };
     this.techniciansMap.set(id, newTechnician);
