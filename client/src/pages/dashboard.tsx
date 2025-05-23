@@ -79,20 +79,20 @@ export default function Dashboard() {
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <h1 className="text-xl font-medium text-foreground">GEM 5000 Support</h1>
+                <h1 className="text-xl font-medium text-foreground">Soporte GEM 5000</h1>
               </div>
               <nav className="hidden md:flex space-x-6">
                 <a href="#dashboard" className="text-medical-blue font-medium border-b-2 border-medical-blue pb-4">
-                  Dashboard
+                  Panel
                 </a>
                 <a href="#requests" className="text-muted-foreground hover:text-medical-blue pb-4 transition-colors">
-                  Requests
+                  Solicitudes
                 </a>
                 <a href="#knowledge" className="text-muted-foreground hover:text-medical-blue pb-4 transition-colors">
-                  Knowledge Base
+                  Base de Conocimientos
                 </a>
                 <a href="#technicians" className="text-muted-foreground hover:text-medical-blue pb-4 transition-colors">
-                  Technicians
+                  Técnicos
                 </a>
               </nav>
             </div>
@@ -117,31 +117,31 @@ export default function Dashboard() {
                 <DialogTrigger asChild>
                   <Button className="bg-critical-red hover:bg-red-700 text-white">
                     <AlertCircle className="w-4 h-4 mr-2" />
-                    <span className="hidden sm:block">Emergency</span>
+                    <span className="hidden sm:block">Emergencia</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="text-critical-red">Emergency Alert</DialogTitle>
+                    <DialogTitle className="text-critical-red">Alerta de Emergencia</DialogTitle>
                     <DialogDescription>
-                      Send an immediate alert to all available technicians
+                      Enviar una alerta inmediata a todos los técnicos disponibles
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium">Location</label>
+                      <label className="text-sm font-medium">Ubicación</label>
                       <Input
                         value={emergencyLocation}
                         onChange={(e) => setEmergencyLocation(e.target.value)}
-                        placeholder="e.g., ICU Room 302"
+                        placeholder="ej. UCI Sala 302"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium">Emergency Message</label>
+                      <label className="text-sm font-medium">Mensaje de Emergencia</label>
                       <Textarea
                         value={emergencyMessage}
                         onChange={(e) => setEmergencyMessage(e.target.value)}
-                        placeholder="Describe the emergency situation..."
+                        placeholder="Describe la situación de emergencia..."
                         rows={3}
                       />
                     </div>
@@ -149,7 +149,7 @@ export default function Dashboard() {
                       onClick={handleEmergencyAlert}
                       className="w-full bg-critical-red hover:bg-red-700 text-white"
                     >
-                      Send Emergency Alert
+                      Enviar Alerta de Emergencia
                     </Button>
                   </div>
                 </DialogContent>

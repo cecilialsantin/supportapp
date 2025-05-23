@@ -70,16 +70,16 @@ export default function SupportRequestForm() {
   };
 
   const priorityOptions = [
-    { value: "low", label: "Low", color: "bg-success-green" },
-    { value: "medium", label: "Medium", color: "bg-warning-orange" },
-    { value: "high", label: "High", color: "bg-critical-red" }
+    { value: "low", label: "Baja", color: "bg-success-green" },
+    { value: "medium", label: "Media", color: "bg-warning-orange" },
+    { value: "high", label: "Alta", color: "bg-critical-red" }
   ];
 
   return (
     <Card className="border-border">
       <CardHeader className="border-b border-border">
-        <CardTitle className="text-lg font-medium text-foreground">Submit Support Request</CardTitle>
-        <p className="text-sm text-muted-foreground mt-1">Report GEM 5000 issues quickly</p>
+        <CardTitle className="text-lg font-medium text-foreground">Enviar Solicitud de Soporte</CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">Reporta problemas con GEM 5000 rápidamente</p>
       </CardHeader>
       
       <CardContent className="p-6">
@@ -92,13 +92,13 @@ export default function SupportRequestForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground">
-                    Device Serial Number
+                    Número de Serie del Equipo
                     <span className="text-critical-red ml-1">*</span>
                   </FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
-                        placeholder="e.g., GEM5000-ABC123"
+                        placeholder="ej. GEM5000-ABC123"
                         className="pr-10"
                         {...field}
                       />
@@ -123,7 +123,7 @@ export default function SupportRequestForm() {
               name="priority"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">Priority Level</FormLabel>
+                  <FormLabel className="text-sm font-medium text-foreground">Nivel de Prioridad</FormLabel>
                   <div className="grid grid-cols-3 gap-2">
                     {priorityOptions.map((option) => (
                       <Button
@@ -155,10 +155,10 @@ export default function SupportRequestForm() {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">Issue Description</FormLabel>
+                  <FormLabel className="text-sm font-medium text-foreground">Descripción del Problema</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe the issue in detail..."
+                      placeholder="Describe el problema en detalle..."
                       rows={4}
                       className="resize-none"
                       {...field}
@@ -175,21 +175,21 @@ export default function SupportRequestForm() {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">Location/Department</FormLabel>
+                  <FormLabel className="text-sm font-medium text-foreground">Ubicación/Departamento</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select department..." />
+                        <SelectValue placeholder="Seleccionar departamento..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="ICU">ICU</SelectItem>
-                      <SelectItem value="Emergency">Emergency</SelectItem>
-                      <SelectItem value="Surgery">Surgery</SelectItem>
-                      <SelectItem value="Cardiology">Cardiology</SelectItem>
-                      <SelectItem value="Laboratory">Laboratory</SelectItem>
-                      <SelectItem value="Radiology">Radiology</SelectItem>
-                      <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                      <SelectItem value="UCI">UCI</SelectItem>
+                      <SelectItem value="Emergencias">Emergencias</SelectItem>
+                      <SelectItem value="Cirugía">Cirugía</SelectItem>
+                      <SelectItem value="Cardiología">Cardiología</SelectItem>
+                      <SelectItem value="Laboratorio">Laboratorio</SelectItem>
+                      <SelectItem value="Radiología">Radiología</SelectItem>
+                      <SelectItem value="Pediatría">Pediatría</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -203,10 +203,10 @@ export default function SupportRequestForm() {
               name="contactNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">Contact Number</FormLabel>
+                  <FormLabel className="text-sm font-medium text-foreground">Número de Contacto</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Extension or mobile number"
+                      placeholder="Extensión o número móvil"
                       {...field}
                     />
                   </FormControl>
@@ -224,12 +224,12 @@ export default function SupportRequestForm() {
               {createRequestMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Submitting...
+                  Enviando...
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4 mr-2" />
-                  Submit Request
+                  Enviar Solicitud
                 </>
               )}
             </Button>
