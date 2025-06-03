@@ -2,314 +2,128 @@ import {
   supportRequests, 
   technicians, 
   knowledgeBaseArticles, 
-  systemNotifications,
+  systemNotifications, 
+  users, 
   type SupportRequest, 
-  type InsertSupportRequest,
-  type Technician,
-  type InsertTechnician,
-  type KnowledgeBaseArticle,
-  type InsertKnowledgeBaseArticle,
-  type SystemNotification
+  type InsertSupportRequest, 
+  type Technician, 
+  type InsertTechnician, 
+  type KnowledgeBaseArticle, 
+  type InsertKnowledgeBaseArticle, 
+  type SystemNotification, 
+  type User, 
+  type InsertUser 
 } from "@shared/schema";
 
+import { db } from "./db";
+
+import { eq } from "drizzle-orm";
+
 export interface IStorage {
-  // Support Requests
   getSupportRequests(): Promise<SupportRequest[]>;
   getSupportRequest(id: number): Promise<SupportRequest | undefined>;
   createSupportRequest(request: InsertSupportRequest): Promise<SupportRequest>;
   updateSupportRequest(id: number, updates: Partial<SupportRequest>): Promise<SupportRequest | undefined>;
-  
-  // Technicians
+
   getTechnicians(): Promise<Technician[]>;
   getTechnician(id: number): Promise<Technician | undefined>;
   createTechnician(technician: InsertTechnician): Promise<Technician>;
   updateTechnician(id: number, updates: Partial<Technician>): Promise<Technician | undefined>;
-  
-  // Knowledge Base
+
   getKnowledgeBaseArticles(): Promise<KnowledgeBaseArticle[]>;
   getKnowledgeBaseArticle(id: number): Promise<KnowledgeBaseArticle | undefined>;
   createKnowledgeBaseArticle(article: InsertKnowledgeBaseArticle): Promise<KnowledgeBaseArticle>;
-  
-  // System Status
+
   getSystemNotifications(): Promise<SystemNotification[]>;
   updateSystemNotification(id: number, updates: Partial<SystemNotification>): Promise<SystemNotification | undefined>;
+
+  getUsers(): Promise<User[]>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
 }
 
-export class MemStorage implements IStorage {
-  private supportRequestsMap: Map<number, SupportRequest>;
-  private techniciansMap: Map<number, Technician>;
-  private knowledgeBaseMap: Map<number, KnowledgeBaseArticle>;
-  private systemNotificationsMap: Map<number, SystemNotification>;
-  private currentRequestId: number;
-  private currentTechnicianId: number;
-  private currentArticleId: number;
-  private currentNotificationId: number;
-
-  constructor() {
-    this.supportRequestsMap = new Map();
-    this.techniciansMap = new Map();
-    this.knowledgeBaseMap = new Map();
-    this.systemNotificationsMap = new Map();
-    this.currentRequestId = 1;
-    this.currentTechnicianId = 1;
-    this.currentArticleId = 1;
-    this.currentNotificationId = 1;
-    
-    this.initializeData();
-  }
-
-  private initializeData() {
-    // Initialize technicians
-    const initialTechnicians: Technician[] = [
-      {
-        id: this.currentTechnicianId++,
-        name: "Mike Chen",
-        email: "mike.chen@hospital.com",
-        phone: "+1234567890",
-        specialty: "Senior Technician",
-        status: "available",
-        activeRequests: 2
-      },
-      {
-        id: this.currentTechnicianId++,
-        name: "Sarah Kim",
-        email: "sarah.kim@hospital.com",
-        phone: "+1234567891",
-        specialty: "Lead Technician",
-        status: "busy",
-        activeRequests: 1
-      },
-      {
-        id: this.currentTechnicianId++,
-        name: "Alex Rodriguez",
-        email: "alex.rodriguez@hospital.com",
-        phone: "+1234567892",
-        specialty: "Technician",
-        status: "off_duty",
-        activeRequests: 0
-      }
-    ];
-
-    initialTechnicians.forEach(tech => this.techniciansMap.set(tech.id, tech));
-
-    // Initialize knowledge base articles
-    const initialArticles: KnowledgeBaseArticle[] = [
-      {
-        id: this.currentArticleId++,
-        title: "Calibration Errors",
-        content: "Step-by-step guide to troubleshoot GEM 5000 calibration issues...",
-        category: "troubleshooting",
-        readTime: 5,
-        updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago
-      },
-      {
-        id: this.currentArticleId++,
-        title: "Network Issues",
-        content: "How to resolve connectivity problems with GEM 5000 devices...",
-        category: "network",
-        readTime: 3,
-        updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
-      },
-      {
-        id: this.currentArticleId++,
-        title: "Maintenance Schedule",
-        content: "Preventive maintenance guidelines for optimal GEM 5000 performance...",
-        category: "maintenance",
-        readTime: 8,
-        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
-      }
-    ];
-
-    initialArticles.forEach(article => this.knowledgeBaseMap.set(article.id, article));
-
-    // Initialize system notifications
-    const initialNotifications: SystemNotification[] = [
-      {
-        id: this.currentNotificationId++,
-        type: "email",
-        status: "active",
-        lastActivity: new Date(Date.now() - 2 * 60 * 1000) // 2 minutes ago
-      },
-      {
-        id: this.currentNotificationId++,
-        type: "sms",
-        status: "active",
-        lastActivity: new Date(Date.now() - 5 * 60 * 1000) // 5 minutes ago
-      },
-      {
-        id: this.currentNotificationId++,
-        type: "system",
-        status: "active",
-        lastActivity: new Date()
-      }
-    ];
-
-    initialNotifications.forEach(notification => this.systemNotificationsMap.set(notification.id, notification));
-
-    // Initialize some sample support requests
-    const initialRequests: SupportRequest[] = [
-      {
-        id: this.currentRequestId++,
-        serialNumber: "GEM5000-ICU-007",
-        priority: "high",
-        description: "Calibration error - Device showing incorrect values",
-        location: "ICU - Room 302",
-        contactNumber: "ext. 4567",
-        status: "in_progress",
-        assignedTechnician: "Mike Chen",
-        submittedBy: "Dr. Johnson",
-        createdAt: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
-        updatedAt: new Date(Date.now() - 2 * 60 * 1000)
-      },
-      {
-        id: this.currentRequestId++,
-        serialNumber: "GEM5000-LAB-012",
-        priority: "medium",
-        description: "Routine maintenance required",
-        location: "Laboratory - Station 3",
-        contactNumber: "ext. 7890",
-        status: "open",
-        assignedTechnician: "Sarah Kim",
-        submittedBy: "Lab Tech",
-        createdAt: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
-        updatedAt: new Date(Date.now() - 15 * 60 * 1000)
-      },
-      {
-        id: this.currentRequestId++,
-        serialNumber: "GEM5000-ER-004",
-        priority: "low",
-        description: "Software update completed successfully",
-        location: "Emergency - Bay 2",
-        contactNumber: "ext. 1234",
-        status: "resolved",
-        assignedTechnician: "Alex Rodriguez",
-        submittedBy: "ER Staff",
-        createdAt: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
-        updatedAt: new Date(Date.now() - 60 * 60 * 1000)
-      }
-    ];
-
-    initialRequests.forEach(request => this.supportRequestsMap.set(request.id, request));
-  }
-
-  // Support Requests
+export class DbStorage implements IStorage {
   async getSupportRequests(): Promise<SupportRequest[]> {
-    return Array.from(this.supportRequestsMap.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return await db.select().from(supportRequests);
   }
 
   async getSupportRequest(id: number): Promise<SupportRequest | undefined> {
-    return this.supportRequestsMap.get(id);
+    const [request] = await db.select().from(supportRequests).where(eq(supportRequests.id, id));
+    return request;
   }
 
   async createSupportRequest(request: InsertSupportRequest): Promise<SupportRequest> {
-    const id = this.currentRequestId++;
-    const now = new Date();
-    const newRequest: SupportRequest = {
-      id,
-      serialNumber: request.serialNumber,
-      priority: request.priority,
-      description: request.description,
-      location: request.location,
-      contactNumber: request.contactNumber || null,
-      status: "open",
-      assignedTechnician: null,
-      submittedBy: request.submittedBy,
-      createdAt: now,
-      updatedAt: now
-    };
-    this.supportRequestsMap.set(id, newRequest);
-    return newRequest;
+    const result = await db.insert(supportRequests).values(request);
+    const [created] = await db.select().from(supportRequests).where(eq(supportRequests.serialNumber, request.serialNumber));
+    return created;
   }
 
   async updateSupportRequest(id: number, updates: Partial<SupportRequest>): Promise<SupportRequest | undefined> {
-    const request = this.supportRequestsMap.get(id);
-    if (!request) return undefined;
-
-    const updatedRequest = {
-      ...request,
-      ...updates,
-      updatedAt: new Date()
-    };
-    this.supportRequestsMap.set(id, updatedRequest);
-    return updatedRequest;
+    await db.update(supportRequests).set(updates).where(eq(supportRequests.id, id));
+    const [updated] = await db.select().from(supportRequests).where(eq(supportRequests.id, id));
+    return updated;
   }
 
-  // Technicians
   async getTechnicians(): Promise<Technician[]> {
-    return Array.from(this.techniciansMap.values());
+    return await db.select().from(technicians);
   }
 
   async getTechnician(id: number): Promise<Technician | undefined> {
-    return this.techniciansMap.get(id);
+    const [tech] = await db.select().from(technicians).where(eq(technicians.id, id));
+    return tech;
   }
 
   async createTechnician(technician: InsertTechnician): Promise<Technician> {
-    const id = this.currentTechnicianId++;
-    const newTechnician: Technician = {
-      id,
-      name: technician.name,
-      email: technician.email,
-      phone: technician.phone || null,
-      specialty: technician.specialty,
-      status: technician.status,
-      activeRequests: 0
-    };
-    this.techniciansMap.set(id, newTechnician);
-    return newTechnician;
+    const result = await db.insert(technicians).values(technician);
+    const [created] = await db.select().from(technicians).where(eq(technicians.email, technician.email));
+    return created;
   }
 
   async updateTechnician(id: number, updates: Partial<Technician>): Promise<Technician | undefined> {
-    const technician = this.techniciansMap.get(id);
-    if (!technician) return undefined;
-
-    const updatedTechnician = {
-      ...technician,
-      ...updates
-    };
-    this.techniciansMap.set(id, updatedTechnician);
-    return updatedTechnician;
+    await db.update(technicians).set(updates).where(eq(technicians.id, id));
+    const [updated] = await db.select().from(technicians).where(eq(technicians.id, id));
+    return updated;
   }
 
-  // Knowledge Base
   async getKnowledgeBaseArticles(): Promise<KnowledgeBaseArticle[]> {
-    return Array.from(this.knowledgeBaseMap.values()).sort((a, b) => 
-      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
+    return await db.select().from(knowledgeBaseArticles);
   }
 
   async getKnowledgeBaseArticle(id: number): Promise<KnowledgeBaseArticle | undefined> {
-    return this.knowledgeBaseMap.get(id);
+    const [article] = await db.select().from(knowledgeBaseArticles).where(eq(knowledgeBaseArticles.id, id));
+    return article;
   }
 
   async createKnowledgeBaseArticle(article: InsertKnowledgeBaseArticle): Promise<KnowledgeBaseArticle> {
-    const id = this.currentArticleId++;
-    const newArticle: KnowledgeBaseArticle = {
-      ...article,
-      id,
-      updatedAt: new Date()
-    };
-    this.knowledgeBaseMap.set(id, newArticle);
-    return newArticle;
+    const result = await db.insert(knowledgeBaseArticles).values(article);
+    const [created] = await db.select().from(knowledgeBaseArticles).where(eq(knowledgeBaseArticles.title, article.title));
+    return created;
   }
 
-  // System Status
   async getSystemNotifications(): Promise<SystemNotification[]> {
-    return Array.from(this.systemNotificationsMap.values());
+    return await db.select().from(systemNotifications);
   }
 
   async updateSystemNotification(id: number, updates: Partial<SystemNotification>): Promise<SystemNotification | undefined> {
-    const notification = this.systemNotificationsMap.get(id);
-    if (!notification) return undefined;
+    await db.update(systemNotifications).set(updates).where(eq(systemNotifications.id, id));
+    const [updated] = await db.select().from(systemNotifications).where(eq(systemNotifications.id, id));
+    return updated;
+  }
 
-    const updatedNotification = {
-      ...notification,
-      ...updates
-    };
-    this.systemNotificationsMap.set(id, updatedNotification);
-    return updatedNotification;
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user);
+    const [created] = await db.select().from(users).where(eq(users.email, user.email));
+    return created;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DbStorage();
